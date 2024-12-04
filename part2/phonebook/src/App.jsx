@@ -53,28 +53,30 @@ const App = () => {
               setPersons(persons.map((contact) => contact.id === p.id ? {...contact, number: response.number} : contact))
               notificationService.showNotification({message: `The number for ${person.name} was changed successfully`, type: "success"}, setNotification)  
             })
-            .catch(error => notificationService.showNotification({message: `Information of ${person.name} has already been removed from the server`, type: "error"}, setNotification))
+            .catch(e => notificationService.showNotification({message: e.response.data.error, type: "error"}, setNotification))
         }
       }
       else {
+        
         alert(`${person.name} is already added to phonebook`)
       }
     }
     else {
       const newContact = {
         name: person.name,
-        number: person.number,
-        id: persons.length + 1,
+        number: person.number
       }
 
       personService
         .createContact(newContact)
-        .then(response => {
-          console.log(response)
+        .then(person => {
+          setPersons(persons.concat({...newContact, id: person.id}))
+          notificationService.showNotification({message: `${person.name} was added to phonebook`, type: "success"}, setNotification)
         })
-                
-      setPersons(persons.concat(newContact))
-      notificationService.showNotification({message: `${person.name} was added to phonebook`, type: "success"}, setNotification)  
+        .catch(e => {
+          console.log(e.response.data.error)
+          notificationService.showNotification({message: e.response.data.error, type: "error"}, setNotification)
+        })
     }
 
     setPerson({name: "", number: ""})
