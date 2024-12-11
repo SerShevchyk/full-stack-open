@@ -105,7 +105,7 @@ describe('Blog list', () => {
   })
 
   afterEach(async ({ page, request }) => {
-    // await request.post('/api/testing/reset')
+    await request.post('/api/testing/reset')
     console.log('Done with tests');
   });
 })
